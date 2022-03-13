@@ -15,7 +15,7 @@ if(!fs.existsSync(filePath)){
     fs.mkdirSync(filePath);
 };
 
-// membuat dile contacts.json
+// membuat file contacts.json
 if(!fs.existsSync(dataPath)){
     fs.writeFileSync(dataPath, '[]', 'utf-8');
 };
@@ -29,11 +29,18 @@ if(!fs.existsSync(dataPath)){
 //     });
 // };
 
-// simpan contact
-const simpanContact = (nama, no, email) =>{
-    const dataUser = {nama, no, email};
+// Membaca json
+const loadContact = () =>{
     const file = fs.readFileSync('data/contacts.json', 'utf-8');
     const x = JSON.parse(file);
+    return x;
+}
+
+
+// simpan contact
+const simpanContact = (nama, email, noHP) =>{
+    const dataUser = {nama, noHP, email};
+    const x = loadContact();
     
     // cek duplikat
     const duplikat = x.find((dataUser) => dataUser.nama === nama);
@@ -50,8 +57,8 @@ const simpanContact = (nama, no, email) =>{
         }
     }
 
-    // cek no hp
-    if(!validator.isMobilePhone(no, 'id-ID')){
+    // cek noHP hp
+    if(!validator.isMobilePhone(noHP, 'id-ID')){
         console.log(chalk.red.inverse.bold("Nomer Hp invalid"));
         return false;
     }
@@ -62,4 +69,38 @@ const simpanContact = (nama, no, email) =>{
     // rl.close();
 }
 
-module.exports = {simpanContact};
+const listContact = () =>{
+    const x = loadContact();
+    x.forEach((contact, index) => {
+        console.log(`${index + 1}: ${contact.nama} - ${contact.noHP}`);
+    });
+}
+
+const detailContact = nama =>{
+    const x = loadContact();
+
+    const contact = x.find(contact => contact.nama.toLowerCase() === nama.toLowerCase());
+    if(!contact){
+        console.log(chalk.red.inverse.bold(`${nama} Tidak ditemukan`));
+        return false;
+    }
+    console.log(`Detail dari ${nama}
+    Nama: ${contact.nama} 
+    No Hp: ${contact.noHP}
+    ${(contact.email)? `Email: ${contact.email}` : ''}`)
+}
+
+const deleteContact = nama =>{
+    const x = loadContact();
+    const newContact = x.filter(contact => contact.nama.toLowerCase() !== nama.toLowerCase())
+
+    if(x.length === newContact.length){
+        console.log(chalk.red.inverse.bold(`${nama} Tidak ditemukan`));
+        return false;
+    }
+
+    fs.writeFileSync('data/contacts.json', JSON.stringify(newContact));
+    console.log(`${nama} berhasil dihapus`);
+}
+
+module.exports = {simpanContact, listContact, detailContact, deleteContact};
