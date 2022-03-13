@@ -1,0 +1,16 @@
+{
+  "name": "latihanke4",
+  "version": "1.0.0",
+  "description": "latihan",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "roxyzc",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "validator": "^13.7.0",
+    "yargs": "^17.3.1"
+  }
+}
